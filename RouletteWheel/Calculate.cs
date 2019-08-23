@@ -4,18 +4,12 @@ using System.Text;
 
 namespace RouletteWheel
 {
-    public class Board : Bets , Iattributes
-    {
-        static int number = 0;
-        public static int SpinWheel()
-        {
-            Random r = new Random();
-            number = numbers[r.Next(0, numbers.Length)];
-            return number;
-        }
-        public Color color {get => getColor(number);set => color = value;}
-        public bool? even { get=>isEven(number); set=>even=value; }
-        public bool? low { get => isLows(number); set => low = value; }
+    public class Calculate : Bets
+    {/*
+        Wheel wheel1 = new Wheel();
+        public Color Color {get => getColor(number);set => Color = value; }
+        public bool? even {get=>isEven(number); set =>even = value; }
+        public bool? low {get => isLows(number); set => low = value; }
 
         static Color getColor(int number)
         {
@@ -35,13 +29,14 @@ namespace RouletteWheel
                 {
                     color = Color.black;
                 }
+                return color;
             }
-            
             return color;
+
         }
         static bool? isEven(int number)
         {
-            bool? even;
+            bool? even = null;
             if (number == 0 || number == 37)
             {
                 even = null;
@@ -57,41 +52,59 @@ namespace RouletteWheel
                 {
                     even = false;
                 }
+
+                return even;
             }
             return even;
 
         }
-        static bool isLows(int number)
+        static bool? isLows(int number)
+        {
+            bool? low = null;
+            if (number == 0 || number == 37)
+            {
+                low = null;
+                return low;
+            }
+            foreach (var element in lows)
+            {
+                if (element == number)
+                {
+                    low = true;
+                }
+                else
+                {
+                    low = false;
+                }
+
+                return low;
+            }
+            return low;
+        }
+        static bool? isStreets(int number)
         {
 
         }
-        static bool isStreets(int number)
+        static bool? isDozens(int number)
         {
 
         }
-        static bool isDozens(int number)
+        static bool? isColumns(int number)
         {
 
         }
-        static bool isColumns(int number)
+        static bool? isSixNums(int number)
         {
 
         }
-        static bool isSixNums(int number)
+        static bool? isSplits(int number)
         {
 
         }
-        static bool isSplits(int number)
+        static bool? isCorners(int number)
         {
 
-        }
-        static bool isCorners(int number)
-        {
-
-        }
-
-
-
+        }*/
 
     }
 
