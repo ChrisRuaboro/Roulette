@@ -12,15 +12,19 @@ namespace RouletteWheel
         static Random rnd = new Random();
         static Color landingColor;
         static int landingInt;
+        static int betTotal;
+        static List<int[]> bet;
+        static int amtbets;
 
-        
+
         static void Main(string[] args)
         {
             Bets.SplitPossibilities(out Bets.splits);
             Title();
             Money(out money);
-            GetBets(amtBets());
+            bet = GetBets(amtBets(out betTotal));
             WheelSpin(out landingColor, out landingInt);
+            CalculateBets(bet);
         }
         static string Character() => "Croupier";
         static void Title()
@@ -55,12 +59,11 @@ namespace RouletteWheel
             Thread.Sleep(1000);
             Console.WriteLine($"{Character()} : Awesome, you have ${money}, let's play.");
         }
-        static int amtBets()
+        static int amtBets(out int userAmtBets)
         {
             Thread.Sleep(1000);
             Console.WriteLine($"{Character()} : How many bets are ya makin?");
             bool valid;
-            int amtbets;
             do
             {
                 valid = int.TryParse(Console.ReadLine(), out amtbets);
@@ -75,23 +78,44 @@ namespace RouletteWheel
             Console.WriteLine($"{Character()} : {amtbets} times huh?");
             Thread.Sleep(1000);
             Console.WriteLine($"{Character()} : well good luck!");
+            userAmtBets = amtbets;
             return amtbets;
         }
-        static int GetBets(int amtBets)
+        static List<int[]> GetBets(int amtBets)
         {
             bool valid;
-            int group = 1;
+            int groupCount;
             int getBets = 0;
+            int chosenNumber = 2;
+            int userBetAmt = 0;
             List<int[]> bet = new List<int[]>();
             try
             {
+                Thread.Sleep(1000);
+                Console.WriteLine($"{Character()} : How much are you betting?");
+                do
+                {
+                    valid = int.TryParse(Console.ReadLine(), out userBetAmt);
+                    if (userBetAmt <= 0)
+                    {
 
+                        Console.WriteLine("Invalid Input");
+                        valid = false;
+                    }
+                    if (userBetAmt > money)
+                    {
+                        Console.WriteLine($"Cannot bet more than ${money}");
+                        valid = false;
+                    }
+
+                } while (!valid);
                 Thread.Sleep(1000);
                 Console.WriteLine($"{Character()} : what type of bet do you wanna make?");
-                listtypesOfBets();
+                
 
                 for (int i = 0; i < amtBets; i++)
                 {
+                    listtypesOfBets();
                     do
                     {
                         Console.Write($"Bet {i + 1}:");
@@ -110,7 +134,7 @@ namespace RouletteWheel
                             Console.WriteLine("What number are you betting on?");
                             Console.WriteLine("To bet on 'Green 00' type 37");
                             int[] chosenNumberToPass = new int[1];
-                            int chosenNumber = 1;
+                            
                             do
                             {
                                 int.TryParse(Console.ReadLine(), out chosenNumber);
@@ -124,7 +148,7 @@ namespace RouletteWheel
                             bet.Add(chosenNumberToPass);
                             break;
                         case 2:
-                            Console.WriteLine($"{Character()}{Enum.GetNames(typeof(TypesOfBets))[getBets-1]} it is!");
+                            Console.WriteLine($"{Character()} : {Enum.GetNames(typeof(TypesOfBets))[getBets-1]} it is!");
                             bet.Add(Bets.evens);
                             break;
                         case 3:
@@ -152,42 +176,176 @@ namespace RouletteWheel
                         case 8:
                             Console.WriteLine($"{Character()} : {Enum.GetNames(typeof(TypesOfBets))[getBets-1]} it is!");
                             Console.WriteLine($"{Character()} : Choose a group to bet on!");
-                            for (int j = 0; j < Bets.dozens.GetLength(0); j++)
+                            for (groupCount = 0; groupCount < Bets.dozens.GetLength(0); groupCount++)
                             {
-                                Console.WriteLine($"Group : {j + 1}");
+                                Console.Write($"Group : {groupCount + 1} ");
                                 for (int k = 0; k < Bets.dozens.GetLength(1); k++)
                                 {
-                                    Console.Write($"{Bets.dozens[j, k]}|");
+                                    Console.Write($"{Bets.dozens[groupCount, k]}|");
                                 }
                                 Console.Write($"\n");
-                                chosenNumber = 1;
-                                do
-                                {
-                                    int.TryParse(Console.ReadLine(), out chosenNumber);
-                                    if (chosenNumber <= 0 || chosenNumber > 37)
-                                    {
-                                        Console.WriteLine("Invalid Number try again");
-                                    }
-                                }
-                                while (chosenNumber <= 0 || chosenNumber > Bets.dozens.GetLength(0));
-                                
                             }
-                            bet.Add(Bets.dozens);
+                            chosenNumber = 1;
+                            do
+                            {
+                                int.TryParse(Console.ReadLine(), out chosenNumber);
+                                if (chosenNumber <= 0 || chosenNumber > groupCount)
+                                {
+                                    Console.WriteLine("Invalid Number try again");
+                                }
+                            }
+                            while (chosenNumber <= 0 || chosenNumber > Bets.dozens.GetLength(0));
+                            int[] arrChoice = new int[Bets.dozens.GetLength(1)];
+                            for (int j = 0; j < Bets.dozens.GetLength(1); j++)
+                            {
+                                arrChoice[j] = Bets.dozens[chosenNumber - 1, j];
+                            }
+                            bet.Add(arrChoice);
                             break;
                         case 9:
                             Console.WriteLine($"{Character()} : {Enum.GetNames(typeof(TypesOfBets))[getBets-1]} it is!");
+                            Console.WriteLine($"{Character()} : Choose a group to bet on!");
+                            for (groupCount = 0; groupCount < Bets.columns.GetLength(0); groupCount++)
+                            {
+                                Console.Write($"Group : {groupCount + 1} ");
+                                for (int k = 0; k < Bets.columns.GetLength(1); k++)
+                                {
+                                    Console.Write($"{Bets.columns[groupCount, k]}|");
+                                }
+                                Console.Write($"\n");
+                            }
+                            chosenNumber = 1;
+                            do
+                            {
+                                int.TryParse(Console.ReadLine(), out chosenNumber);
+                                if (chosenNumber <= 0 || chosenNumber > groupCount)
+                                {
+                                    Console.WriteLine("Invalid Number try again");
+                                }
+                            }
+                            while (chosenNumber <= 0 || chosenNumber > Bets.columns.GetLength(0));
+                            arrChoice = new int[Bets.columns.GetLength(1)];
+                            for (int j = 0; j < Bets.columns.GetLength(1); j++)
+                            {
+                                arrChoice[j] = Bets.columns[chosenNumber - 1, j];
+                            }
+                            bet.Add(arrChoice);
                             break;
                         case 10:
                             Console.WriteLine($"{Character()} : {Enum.GetNames(typeof(TypesOfBets))[getBets-1]} it is!");
+                            Console.WriteLine($"{Character()} : Choose a group to bet on!");
+                            for (groupCount = 0; groupCount < Bets.streets.GetLength(0); groupCount++)
+                            {
+                                Console.Write($"Group : {groupCount + 1} ");
+                                for (int k = 0; k < Bets.streets.GetLength(1); k++)
+                                {
+                                    Console.Write($"{Bets.streets[groupCount, k]}|");
+                                }
+                                Console.Write($"\n");
+                            }
+                            chosenNumber = 1;
+                            do
+                            {
+                                int.TryParse(Console.ReadLine(), out chosenNumber);
+                                if (chosenNumber <= 0 || chosenNumber > groupCount)
+                                {
+                                    Console.WriteLine("Invalid Number try again");
+                                }
+                            }
+                            while (chosenNumber <= 0 || chosenNumber > Bets.streets.GetLength(0));
+                            arrChoice = new int[Bets.streets.GetLength(1)];
+                            for (int j = 0; j < Bets.streets.GetLength(1); j++)
+                            {
+                                arrChoice[j] = Bets.streets[chosenNumber - 1, j];
+                            }
+                            bet.Add(arrChoice);
                             break;
                         case 11:
                             Console.WriteLine($"{Character()} : {Enum.GetNames(typeof(TypesOfBets))[getBets-1]} it is!");
+                            Console.WriteLine($"{Character()} : Choose a group to bet on!");
+                            for (groupCount = 0; groupCount < Bets.sixNums.GetLength(0); groupCount++)
+                            {
+                                Console.Write($"Group : {groupCount + 1} ");
+                                for (int k = 0; k < Bets.sixNums.GetLength(1); k++)
+                                {
+                                    Console.Write($"{Bets.sixNums[groupCount, k]}|");
+                                }
+                                Console.Write($"\n");
+                            }
+                            chosenNumber = 1;
+                            do
+                            {
+                                int.TryParse(Console.ReadLine(), out chosenNumber);
+                                if (chosenNumber <= 0 || chosenNumber > groupCount)
+                                {
+                                    Console.WriteLine("Invalid Number try again");
+                                }
+                            }
+                            while (chosenNumber <= 0 || chosenNumber > Bets.sixNums.GetLength(0));
+                            arrChoice = new int[Bets.sixNums.GetLength(1)];
+                            for (int j = 0; j < Bets.sixNums.GetLength(1); j++)
+                            {
+                                arrChoice[j] = Bets.sixNums[chosenNumber - 1, j];
+                            }
+                            bet.Add(arrChoice);
                             break;
                         case 12:
                             Console.WriteLine($"{Character()} : {Enum.GetNames(typeof(TypesOfBets))[getBets-1]} it is!");
+                            Console.WriteLine($"{Character()} : Choose a group to bet on!");
+                            for (groupCount = 0; groupCount < Bets.splits.GetLength(0); groupCount++)
+                            {
+                                Console.Write($"Group : {groupCount + 1} ");
+                                for (int k = 0; k < Bets.splits.GetLength(1); k++)
+                                {
+                                    Console.Write($"{Bets.splits[groupCount, k]}|");
+                                }
+                                Console.Write($"\n");
+                            }
+                            chosenNumber = 1;
+                            do
+                            {
+                                int.TryParse(Console.ReadLine(), out chosenNumber);
+                                if (chosenNumber <= 0 || chosenNumber > groupCount)
+                                {
+                                    Console.WriteLine("Invalid Number try again");
+                                }
+                            }
+                            while (chosenNumber <= 0 || chosenNumber > Bets.splits.GetLength(0));
+                            arrChoice = new int[Bets.splits.GetLength(1)];
+                            for (int j = 0; j < Bets.splits.GetLength(1); j++)
+                            {
+                                arrChoice[j] = Bets.splits[chosenNumber - 1, j];
+                            }
+                            bet.Add(arrChoice);
                             break;
                         case 13:
                             Console.WriteLine($"{Character()} : {Enum.GetNames(typeof(TypesOfBets))[getBets-1]} it is!");
+                            Console.WriteLine($"{Character()} : Choose a group to bet on!");
+                            for (groupCount = 0; groupCount < Bets.corners.GetLength(0); groupCount++)
+                            {
+                                Console.Write($"Group : {groupCount + 1} ");
+                                for (int k = 0; k < Bets.corners.GetLength(1); k++)
+                                {
+                                    Console.Write($"{Bets.corners[groupCount, k]}|");
+                                }
+                                Console.Write($"\n");
+                            }
+                            chosenNumber = 1;
+                            do
+                            {
+                                int.TryParse(Console.ReadLine(), out chosenNumber);
+                                if (chosenNumber <= 0 || chosenNumber > groupCount)
+                                {
+                                    Console.WriteLine("Invalid Number try again");
+                                }
+                            }
+                            while (chosenNumber <= 0 || chosenNumber > Bets.corners.GetLength(0));
+                            arrChoice = new int[Bets.corners.GetLength(1)];
+                            for (int j = 0; j < Bets.corners.GetLength(1); j++)
+                            {
+                                arrChoice[j] = Bets.corners[chosenNumber - 1, j];
+                            }
+                            bet.Add(arrChoice);
                             break;
                         default:
                             break;
@@ -199,8 +357,8 @@ namespace RouletteWheel
             {
                 Console.WriteLine("Invalid input");
             }
-            
-            return getBets;
+            betTotal = userBetAmt;
+            return bet;
         }
         static void listtypesOfBets()
         {
@@ -232,6 +390,37 @@ namespace RouletteWheel
             landingColor = wheel.RandomPiece.color;
             landingNumber = wheel.RandomPiece.number;
             Console.WriteLine($"The ball landed on {landingNumber} {landingColor}");
+        }
+        static void CalculateBets(List<int[]> bet)
+        {
+            bool win = false;
+            foreach (var item in bet)
+            {
+                foreach (var piece in item)
+                {
+                    if (landingInt == piece)
+                    {
+                        win = true;
+                    }
+                }
+                if (win == false)
+                {
+                    Console.WriteLine($"Bet {bet.IndexOf(item)+1} lost");
+                    int lost = betTotal / amtbets;
+                    money -= lost;
+                    Console.WriteLine($"Lost {lost} : Total is {money}");
+                }
+                if (win == true)
+                {
+                    Console.WriteLine($"Bet {bet.IndexOf(item)+1} Won");
+                    //TODO Case for type of bet
+                    int won = betTotal / amtbets * 2;
+                    money += won;
+                    Console.WriteLine($"Won {won} : Total is {money}");
+
+                }
+            }
+            Console.WriteLine($"Total amount of money is {money}");
         }
         static void exitGame()
         {
