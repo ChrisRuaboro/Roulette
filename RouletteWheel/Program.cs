@@ -21,10 +21,14 @@ namespace RouletteWheel
         {
             Bets.SplitPossibilities(out Bets.splits);
             Title();
-            Money(out money);
-            bet = GetBets(amtBets(out betTotal));
-            WheelSpin(out landingColor, out landingInt);
-            CalculateBets(bet);
+            while (money >= 0)
+            {
+                Money(out money);
+                bet = GetBets(amtBets(out betTotal));
+                WheelSpin(out landingColor, out landingInt);
+                CalculateBets(bet);
+            }
+            
         }
         static string Character() => "Croupier";
         static void Title()
