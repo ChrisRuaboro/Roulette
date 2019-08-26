@@ -147,12 +147,12 @@ namespace RouletteWheel
                             do
                             {
                                 int.TryParse(Console.ReadLine(), out chosenNumber);
-                                if (chosenNumber <= 0 || chosenNumber > 37)
+                                if (chosenNumber < 0 || chosenNumber > 37)
                                 {
                                     Console.WriteLine("Invalid Number try again");
                                 }
                             }
-                            while (chosenNumber <=0 || chosenNumber > 37);
+                            while (chosenNumber <0 || chosenNumber > 37);
                             chosenNumberToPass[0] = chosenNumber;
                             bet.Add(chosenNumberToPass);
                             break;
