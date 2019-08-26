@@ -102,6 +102,8 @@ namespace RouletteWheel
             {
                 Thread.Sleep(1000);
                 Console.WriteLine($"{Character()} : How much are you betting?");
+                //TODO Implement different amount for different bet
+                Console.WriteLine($"Bet amount will be split evenly across bets");
                 do
                 {
                     valid = int.TryParse(Console.ReadLine(), out userBetAmt);
