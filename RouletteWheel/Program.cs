@@ -21,9 +21,13 @@ namespace RouletteWheel
         {
             Bets.SplitPossibilities(out Bets.splits);
             Title();
+            Money(out money);
             while (money >= 0)
             {
-                Money(out money);
+                if (money == 0)
+                {
+                    exitGame();
+                }
                 bet = GetBets(amtBets(out betTotal));
                 WheelSpin(out landingColor, out landingInt);
                 CalculateBets(bet);
@@ -65,6 +69,7 @@ namespace RouletteWheel
         }
         static int amtBets(out int userAmtBets)
         {
+            
             Thread.Sleep(1000);
             Console.WriteLine($"{Character()} : How many bets are ya makin?");
             bool valid;
